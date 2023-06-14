@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Charts</title>
+</head>
+<body>
+    <h1>Simple API for Binance Charts</h1>
+    <h4>If the field is left empty, the information for "BNBUSDT" will be displayed.</h4>
+    <form action="/data_csv" method="GET">
+        <label for="symbol_csv">Symbol (CSV):</label>
+        <input type="text" name="symbol_csv" id="symbol_csv" placeholder="BNBUSDT">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <h4>If the field is left empty, the information for "BNBUSDT" will be displayed.</h4>
+      <br>
+    <form action="/data_db" method="GET">
+        <label for="symbol_db">Symbol (DB):</label>
+        <input type="text" name="symbol_db" id="symbol_db" placeholder="BNBUSDT">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <h4>Specify the symbols for constructing a Pie chart.</h4>
+          <br>
+    <form action="/data_csv_pie" method="GET" accept-charset="UTF-8">
+        <label for="symbol_1">Symbol 1:</label>
+        <input type="text" name="symbol_1" id="symbol_1" placeholder="BTCUSDT" value="BTCUSDT">
+        <br>
+        <label for="symbol_2">Symbol 2:</label>
+        <input type="text" name="symbol_2" id="symbol_2" placeholder="ETHUSDT" value="ETHUSDT">
+        <br>
+        <label for="symbol_3">Symbol 3:</label>
+        <input type="text" name="symbol_3" id="symbol_3" placeholder="BNBUSDT" value="BNBUSDT">
+        <br>
+        <label for="symbol_4">Symbol 4:</label>
+        <input type="text" name="symbol_4" id="symbol_4" placeholder="ADAUSDT" value="ADAUSDT">
+        <br>
+        <label for="symbol_5">Symbol 5:</label>
+        <input type="text" name="symbol_5" id="symbol_5" placeholder="DOGEUSDT" value="DOGEUSDT">
+        <br>
+        <label for="symbol_6">Symbol 6:</label>
+        <input type="text" name="symbol_6" id="symbol_6" placeholder="XRPUSDT" value="XRPUSDT">
+        <br>
+        <label for="symbol_7">Symbol 7:</label>
+        <input type="text" name="symbol_7" id="symbol_7" placeholder="DOTUSDT" value="DOTUSDT">
+        <br>
+        <label for="symbol_8">Symbol 8:</label>
+        <input type="text" name="symbol_8" id="symbol_8" placeholder="TRXUSDT" value="TRXUSDT">
+        <br>
+        <label for="symbol_9">Symbol 9:</label>
+        <input type="text" name="symbol_9" id="symbol_9" placeholder="LTCUSDT" value="LTCUSDT">
+        <br>
+        <label for="symbol_10">Symbol 10:</label>
+        <input type="text" name="symbol_10" id="symbol_10" placeholder="SOLUSDT" value="SOLUSDT">
+        <br>
+        <label for="interval">Interval:</label>
+        <select name="interval" id="interval">
+            <option value="1m">1 min</option>
+            <option value="3m">3 min</option>
+            <option value="5m">5 min</option>
+            <option value="15m">15 min</option>
+            <option value="30m">30 min</option>
+            <option value="1h">1 hour</option>
+            <option value="2h">2 hours</option>
+            <option value="4h">4 hours</option>
+            <option value="6h">6 hours</option>
+            <option value="8h">8 hours</option>
+            <option value="12h">12 hours</option>
+            <option value="1d" selected>1 day</option>
+            <option value="3d">3 days</option>
+            <option value="1w">1 week</option>
+            <option value="1M">1 month</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="error-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
