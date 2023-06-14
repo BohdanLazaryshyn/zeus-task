@@ -32,7 +32,8 @@ def save_candles_to_csv_for_pie(candles_info, symbol):       # save candles to c
 
 
 def save_candles_to_csv(candles_info, symbol):
-    filename = f"candles_{symbol}.csv"
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    filename = f"candles_{symbol} - {date}.csv"
     if not os.path.isfile(filename):
         with open(filename, "w") as f:
             writer = csv.writer(f)

@@ -5,8 +5,6 @@ from config import API_KEY, API_SECRET
 from models import CandleInfoCSV
 from utils import read_candles, save_candles_to_csv
 
-api_url = "https://api.binance.com/api/v3"
-
 api_key = API_KEY                              # Your api key
 api_secret = API_SECRET                        # Your api secret
 
@@ -28,7 +26,7 @@ def get_candles(symbol, interval, limit):       # Get candles from binance api a
     return data
 
 
-def job():                                      # Job for schedule module
+def job():                                                # Job for schedule module
     data = get_candles(SYMBOL, INTERVAL, LIMIT)           # Get candles from binance api
     save_candles_to_csv(data, SYMBOL)                     # Save candles to csv
     print(data)
@@ -78,6 +76,6 @@ def main(symbol: str = SYMBOL, interval: str = INTERVAL, limit: int = LIMIT):  #
 
 if __name__ == "__main__":
     main(SYMBOL, INTERVAL, LIMIT)       # Run main() with "Coin", "interval", "num of candles" to start scheduler
-    INTERVAL_LIST = [             # List of available intervals
+    INTERVAL_LIST = [                   # List of available intervals
         "1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "6h", "8h", "12h", "1d", "3d", "1w", "1M"
     ]

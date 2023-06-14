@@ -4,7 +4,8 @@ from flask import render_template, request, flash
 import plotly.graph_objs as go
 
 from config import app
-from main import SYMBOL, SYMBOL_LIST, get_candles, LIMIT
+from main import get_candles, SYMBOL, SYMBOL_LIST, LIMIT
+from models import CandleInfoSQL
 from utils import build_graph
 
 
@@ -41,9 +42,7 @@ def get_data(symbol: str) -> list:              # Get data from csv file and ret
         with open(f"candles_{symbol}.csv", "r") as file:
             csv_reader = csv.reader(file)
             for row in csv_reader:
-                if row != []:
-                    if symbol in row:
-                        data.append(row)
+                data.append(row)
         return data
     except FileNotFoundError:                    # If file not found return flash message and None
         flash(f"Для символу {symbol} немає даних")
@@ -62,40 +61,43 @@ def get_data_from_csv():
     else:
         if check_symbol(symbol):
             return render_template("index.html")
-    print(symbol)
     candles = get_data(symbol)
+
     if not candles:
         return render_template("index.html")
-    time_open = [row[1] for row in candles]
-    prices_open = [row[2] for row in candles]
-    prices_high = [row[3] for row in candles]
-    prices_low = [row[4] for row in candles]
-    prices_close = [row[5] for row in candles]
+
+    time_open = [row[1] for row in candles if symbol in row]
+    prices_open = [row[2] for row in candles if symbol in row]
+    prices_high = [row[3] for row in candles if symbol in row]
+    prices_low = [row[4] for row in candles if symbol in row]
+    prices_close = [row[5] for row in candles if symbol in row]
+
     fig = build_graph(time_open, prices_open, prices_high, prices_low, prices_close, symbol)  # Build graph with plotly
     return fig.to_html(full_html=False)
 
 
-# @app.route("/data_db", methods=["GET"])         # Get data from db and build graph (optional)
-# def get_data_from_db():
-#     symbol = request.args.get("symbol_db")
-#     if not symbol:
-#         symbol = SYMBOL
-#     else:
-#         if check_symbol(symbol):
-#             return render_template("index.html")
-#     print(symbol)
-#     candles = CandleInfoSQL.query.filter_by(symbol=symbol).all()
-#     if not candles:
-#         flash(f"Для символу {symbol} немає даних в базі даних")
-#         return render_template("index.html")
-#     time_open = [candle.time_open for candle in candles]
-#     prices_open = [candle.open_price for candle in candles]
-#     prices_high = [candle.high_price for candle in candles]
-#     prices_low = [candle.low_price for candle in candles]
-#     prices_close = [candle.close_price for candle in candles]
-#
-#     fig = build_graph(time_open, prices_open, prices_high, prices_low, prices_close, symbol)
-#     return fig.to_html(full_html=False)
+@app.route("/data_db", methods=["GET"])         # Get data from db and build graph (optional)
+def get_data_from_db():
+    symbol = request.args.get("symbol_db")
+    if not symbol:
+        symbol = SYMBOL
+    else:
+        if check_symbol(symbol):
+            return render_template("index.html")
+
+    candles = CandleInfoSQL.query.filter_by(symbol=symbol).all()
+    if not candles:
+        flash(f"Для символу {symbol} немає даних в базі даних")
+        return render_template("index.html")
+
+    time_open = [candle.time_open for candle in candles]
+    prices_open = [candle.open_price for candle in candles]
+    prices_high = [candle.high_price for candle in candles]
+    prices_low = [candle.low_price for candle in candles]
+    prices_close = [candle.close_price for candle in candles]
+
+    fig = build_graph(time_open, prices_open, prices_high, prices_low, prices_close, symbol)
+    return fig.to_html(full_html=False)
 
 
 @app.route("/data_csv_pie", methods=["GET"])    # Get data from csv file and build pie chart for capital of 10 symbols
@@ -111,12 +113,14 @@ def get_data_from_db_pie():
     symbol_8 = request.args.get("symbol_8")
     symbol_9 = request.args.get("symbol_9")
     symbol_10 = request.args.get("symbol_10")
+
     symbols = [symbol_1, symbol_2, symbol_3, symbol_4, symbol_5, symbol_6, symbol_7, symbol_8, symbol_9, symbol_10]
     for symbol in symbols:
         if check_symbol(symbol):
             return render_template("index.html")
     if check_symbol_list(symbols):
         return render_template("index.html")
+
     volumes = get_capital_data(symbols, interval)     # Get capital data for pie chart from binance api
     fig = go.Figure(data=[go.Pie(labels=symbols, values=list(volumes.values()))])
     fig.update_layout(
