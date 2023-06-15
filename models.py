@@ -1,5 +1,3 @@
-from dataclasses import dataclass, fields
-
 from config import db
 
 
@@ -14,17 +12,3 @@ class CandleInfoSQL(db.Model):                             # model for work with
     volume = db.Column(db.Float, nullable=False)
     time_close = db.Column(db.String(20), nullable=False)
 
-
-@dataclass
-class CandleInfoCSV:                                        # model for work with CSV file
-    symbol: str
-    time_open: str
-    open_price: float
-    high_price: float
-    low_price: float
-    close_price: float
-    volume: float
-    time_close: str
-
-
-CANDLE_FIELD = [field.name for field in fields(CandleInfoCSV)]   # list of fields for CSV file

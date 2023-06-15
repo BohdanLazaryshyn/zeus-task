@@ -2,21 +2,22 @@ from binance.spot import Spot as Client
 import schedule as schedule
 
 from config import API_KEY, API_SECRET
-from models import CandleInfoCSV
-from utils import read_candles, save_candles_to_csv
+from utils import read_candles, save_candles_to_csv, CandleInfoCSV
 
-api_key = API_KEY                              # Your api key
-api_secret = API_SECRET                        # Your api secret
+api_key = API_KEY                                                            # Your api key for work with binance api
+api_secret = API_SECRET                                                      # Your api secret for work with binance api
 
-client = Client(api_key, api_secret)    # Create client object
+client = Client(api_key, api_secret)
 
-SYMBOL = "BNBUSDT"  # Trading symbol,
-SYMBOL_LIST = [coin["symbol"] for coin in client.exchange_info()["symbols"]]  # List of trading symbols
-INTERVAL = "1m"  # Candle interval in minutes
-LIMIT = 100  # Number of candles to request
+SYMBOL = "BNBUSDT"                                                                        # Trading symbol,
+SYMBOL_LIST = [
+    coin["symbol"] for coin in client.exchange_info()["symbols"]                          # List of trading symbols
+]
+INTERVAL = "1m"                                                                           # Candle interval in minutes
+LIMIT = 100                                                                               # Number of candles to request
 
 
-def get_candles(symbol, interval, limit):       # Get candles from binance api and return list of CandleInfoCSV objects
+def get_candles(symbol, interval, limit):
     candles = client.klines(symbol=symbol, interval=interval, limit=limit)
     data = []
     for candle in candles:
@@ -26,13 +27,13 @@ def get_candles(symbol, interval, limit):       # Get candles from binance api a
     return data
 
 
-def job():                                                # Job for schedule module
-    data = get_candles(SYMBOL, INTERVAL, LIMIT)           # Get candles from binance api
-    save_candles_to_csv(data, SYMBOL)                     # Save candles to csv
+def job():
+    data = get_candles(SYMBOL, INTERVAL, LIMIT)
+    save_candles_to_csv(data, SYMBOL)
     print(data)
 
 
-def main(symbol: str = SYMBOL, interval: str = INTERVAL, limit: int = LIMIT):  # Main function to start scheduler
+def main(symbol: str = SYMBOL, interval: str = INTERVAL, limit: int = LIMIT):
     global SYMBOL, INTERVAL, LIMIT
     LIMIT = limit
     SYMBOL = symbol
