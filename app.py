@@ -36,7 +36,7 @@ def symbol_repeat(symbol_list: list) -> bool:
             return True
 
 
-def get_data(symbol: str) -> list:              # Get data from csv file and return list of lists with data for graph
+def get_data(symbol: str) -> list:
     data = []
     try:
         with open(f"candles_{symbol}.csv", "r") as file:
@@ -112,7 +112,7 @@ def get_data_from_db():
 def get_data_from_csv_pie():
     interval = request.args.get("interval")
     limit = request.args.get("limit")
-    symbols = [request.args.get(f"symbol_{i}") for i in range(1, 11)]       # Get symbols from form for pie chart
+    symbols = [request.args.get(f"symbol_{i}") for i in range(1, 11)]             # Get symbols from form for pie chart
 
     for symbol in symbols:
         if symbol_is_not_valid(symbol):
@@ -120,7 +120,7 @@ def get_data_from_csv_pie():
     if symbol_repeat(symbols):
         return render_template("index.html")
 
-    volumes = get_capital_data(symbols, interval, limit)                      # Get capital data for pie chart from binance api
+    volumes = get_capital_data(symbols, interval, limit)
 
     fig = go.Figure(data=[go.Pie(labels=symbols, values=list(volumes.values()))])
 
