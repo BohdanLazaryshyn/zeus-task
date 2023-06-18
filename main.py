@@ -40,36 +40,25 @@ def main(symbol: str = SYMBOL, interval: str = INTERVAL, limit: int = LIMIT):
     INTERVAL = interval
     if symbol not in SYMBOL_LIST:
         raise ValueError(f"Invalid symbol - '{symbol}'")
-    if INTERVAL == "1m":
-        schedule.every(1).minutes.do(job)
-    if INTERVAL == "3m":
-        schedule.every(3).minutes.do(job)
-    if INTERVAL == "5m":
-        schedule.every(5).minutes.do(job)
-    if INTERVAL == "15m":
-        schedule.every(15).minutes.do(job)
-    if INTERVAL == "30m":
-        schedule.every(30).minutes.do(job)
-    if INTERVAL == "1h":
-        schedule.every().hour.do(job)
-    if INTERVAL == "2h":
-        schedule.every(2).hours.do(job)
-    if INTERVAL == "4h":
-        schedule.every(4).hours.do(job)
-    if INTERVAL == "6h":
-        schedule.every(6).hours.do(job)
-    if INTERVAL == "8h":
-        schedule.every(8).hours.do(job)
-    if INTERVAL == "12h":
-        schedule.every(12).hours.do(job)
-    if INTERVAL == "1d":
-        schedule.every().day.at("12:00").do(job)
-    if INTERVAL == "3d":
-        schedule.every(3).days.at("12:00").do(job)
-    if INTERVAL == "1w":
-        schedule.every().sunday.at("12:00").do(job)
-    if INTERVAL == "1M":
-        schedule.every().month.at("12:00").do(job)
+    intervals = {
+        "1m": 1, "3m": 3, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "2h": 120, "4h": 240,
+        "6h": 360, "8h": 480, "12h": 720, "1d": 1440, "3d": 4320, "1w": 10080, "1M": 43200
+    }
+    if interval not in intervals:
+        raise ValueError(f"Invalid interval - '{interval}'")
+
+    schedule_interval = intervals[INTERVAL]
+    if schedule_interval < 60:
+        schedule.every(schedule_interval).minutes.do(job)
+    elif schedule_interval < 1440:
+        schedule.every(schedule_interval // 60).hours.do(job)
+    elif schedule_interval < 10080:
+        schedule.every(schedule_interval // 1440).days.at("12:00").do(job)
+    else:
+        if INTERVAL == "1w":
+            schedule.every().sunday.at("12:00").do(job)
+        elif INTERVAL == "1M":
+            schedule.every().month.at("12:00").do(job)
 
     while True:
         schedule.run_pending()
